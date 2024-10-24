@@ -8,7 +8,6 @@ import { Table } from "@/components/ui/table";
 import Image from "next/image";
 import * as React from 'react'
 import { FaPiggyBank, FaMoneyBillWave, FaChartLine } from "react-icons/fa";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import { Line, Doughnut } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -346,22 +345,6 @@ export default function Dashboard() {
                 </div>
             </CardContent>
           </Card>
-      
-          <figure className="col-span-3">
-          <Card className="col-span-3">
-          <CardHeader>
-            <CardTitle>Revenue by Business Segment</CardTitle>
-            <CardDescription>Revenue breakdown for different business segments (e.g., desktop, mobile).</CardDescription>
-          </CardHeader>
-          <CardContent className="flex justify-center">
-            <BarChart width={1500} height={300} data={chartData}>
-              <CartesianGrid strokeDasharray="8 0" />
-              <XAxis />
-              <Bar dataKey={activeChart} fill={chartConfig[activeChart].label && '#8B5CF6'} />
-            </BarChart>
-          </CardContent>
-        </Card>
-          </figure>
       
           <footer className="col-span-3 grid grid-cols-1 lg:grid-cols-2 gap-4">
             <Card className="lg:h-[480px] w-full">
