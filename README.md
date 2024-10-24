@@ -1,5 +1,3 @@
-<a href="">Clique aqui para ter acesso ao projeto!</a>
-
 <h1>Front-End MS | Dashboard</h1>
 
 <p>Este projeto foi desenvolvido com as Tecnologias</p>
