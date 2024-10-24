@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig} from "@/components/ui/chart";
@@ -31,24 +30,6 @@ import { Input } from "@/components/ui/input";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-
-//Contornando o erro com Client Only Components
-
-interface ClientOnlyProps {
-  children: React.ReactNode;
-}
-
-const ClientOnlyComponent: React.FC<ClientOnlyProps> = ({ children }) => {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) return null;
-
-  return <>{children}</>; 
-};
 
 
 const data = {
@@ -201,9 +182,12 @@ export default function Dashboard() {
     category: expense.category,
     percentage: (expense.amount / totalExpenses) * 100,
   }));
+
+  
+
+
     return (
-        <ClientOnlyComponent>
-          <section className="max-w-[1735px] mx-auto">
+        <section className="max-w-[1735px] mx-auto">
         <header className="flex flex-col justify-center lg:items-center lg:flex-row lg:justify-around">
           <div className="flex justify-center items-center">
             <Image src="/Logo.svg" quality={100} width={200} height={200} alt="" className="animate-pulse" />
@@ -450,7 +434,6 @@ export default function Dashboard() {
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>
-      </section>  
-        </ClientOnlyComponent>    
+      </section>      
     )
 }
