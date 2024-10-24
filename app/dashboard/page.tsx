@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig} from "@/components/ui/chart";
@@ -23,7 +24,7 @@ import {
 } from 'chart.js';
 import { Button } from "@/components/ui/button";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 
 
@@ -31,17 +32,23 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 
-interface ItemWithColor {
-    label: string;
-    color: string;
+//Contornando o erro com Client Only Components
+
+interface ClientOnlyProps {
+  children: React.ReactNode;
 }
 
-interface ItemWithoutColor {
-    label: string;
-    TooltipItem: string;
-}
+const ClientOnlyComponent: React.FC<ClientOnlyProps> = ({ children }) => {
+  const [isMounted, setIsMounted] = useState(false);
 
-type TooltipItem = ItemWithColor | ItemWithoutColor;
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
+
+  return <>{children}</>; 
+};
 
 
 const data = {
@@ -55,25 +62,6 @@ const data = {
       fill: true,
     },
   ],
-};
-
-const options = {
-  cutout: '70%', 
-  plugins: {
-    legend: {
-      display: true,
-      position: 'top',
-    },
-    tooltip: {
-      callbacks: {
-        label: (tooltipItem) => {
-          const label = tooltipItem.label || tooltipItem.dataset.label || '';
-          const value = tooltipItem.raw !== undefined ? tooltipItem.raw : 0;
-          return `${label}: ${value} customers`;
-        },
-      },
-    },
-  },  
 };
 
 export const description = "An interactive bar chart"
@@ -187,8 +175,8 @@ const chartData = [
   } satisfies ChartConfig
 
 
-export default function Dashboard(item: TooltipItem) {
-    const [activeChart, setActiveChart] =
+export default function Dashboard() {
+    const [activeChart] =
     React.useState<keyof typeof chartConfig>("desktop")
   const total = React.useMemo(
     () => ({
@@ -213,29 +201,9 @@ export default function Dashboard(item: TooltipItem) {
     category: expense.category,
     percentage: (expense.amount / totalExpenses) * 100,
   }));
-
-  const dataGrowth = {
-    labels: ['New Customers', 'Returning Customers', 'Inactive Customers'],
-    datasets: [
-      {
-        label: 'Customer Growth',
-        data: [30, 50, 20],
-        backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56'],
-        hoverBackgroundColor: ['#36A2EB', '#FF6384', '#FFCE56'],
-      },
-    ],
-  };
-
-  if ('color' in item) {
-   
-    console.log(item.color);
-} else {
-
-    console.log("Color não disponível");
-}
-
     return (
-        <section className="max-w-[1735px] mx-auto">
+        <ClientOnlyComponent>
+          <section className="max-w-[1735px] mx-auto">
         <header className="flex flex-col justify-center lg:items-center lg:flex-row lg:justify-around">
           <div className="flex justify-center items-center">
             <Image src="/Logo.svg" quality={100} width={200} height={200} alt="" className="animate-pulse" />
@@ -405,7 +373,7 @@ export default function Dashboard(item: TooltipItem) {
             <BarChart width={1500} height={300} data={chartData}>
               <CartesianGrid strokeDasharray="8 0" />
               <XAxis />
-              <Bar dataKey={activeChart} fill={chartConfig[activeChart]!.label.color || '#8B5CF6'} />
+              <Bar dataKey={activeChart} fill={chartConfig[activeChart].label && '#8B5CF6'} />
             </BarChart>
           </CardContent>
         </Card>
@@ -482,6 +450,7 @@ export default function Dashboard(item: TooltipItem) {
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>
-      </section>      
+      </section>  
+        </ClientOnlyComponent>    
     )
 }
